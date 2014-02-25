@@ -1,51 +1,53 @@
-// Brix.SimpleActivity
-// -------
+// Copyright (c) 1999-2014 Maxifier Ltd. All Rights Reserved.
 
-/**
- * @class {Brix.SimpleActivity}
- * @extends {Brix.Activity}
- */
-Brix.SimpleActivity = Brix.Activity.extend(
-    /**
-     * @lends {Brix.SimpleActivity.prototype}
-     */
-    {
-        /**
-         *
-         * @constructor
-         */
-        constructor: function SimpleActivity(options) {
-            if (options) {
-                if (Underscore.isFunction(options)) {
-                    this.view = options;
-                } else if (Underscore.isFunction(options.view)) {
-                    this.view = options.view;
-                }
-            }
-            Brix.Activity.prototype.constructor.apply(this, arguments);
-            if (!Underscore.isFunction(this.view)) {
-                throw new Error("SimpleActivity should be initiated with view class");
-            }
-        },
-        /**
-         * @type {Marionette.View}
-         */
-        view: null,
+/*jshint globalstrict:true */
+"use strict";
 
-        /**
-         * Starts activity
-         *
-         * @param {Marionette.Region} region region to display something from this activity
-         * @param {Brix.Place} place new place
-         */
-        start: function (region, place) {
-            // Just to remove annoying intention from WebStorm
-            var ViewClass = this.view;
+var Brix = require('brix');
+var Marionette = require('marionette');
+var _ = require('underscore');
 
-            // Create view
-            region.show(new ViewClass());
-
-            // View will be closed when something else is shown by region
-        }
+var SimpleView = Marionette.ItemView.extend({
+    initialize: function (options) {
+        this.template = options.template;
+        this.listenTo(this.model, 'change', this.render);
     }
-);
+});
+
+var SimpleActivity = Brix.Activity.extend({
+
+    model: null, //by constructor
+    template: null, //by constructor
+
+    initialize: function (options) {
+        this.model = options.model;
+        this.template = options.template;
+        this.view = options.view;
+    },
+
+    start: function (region, place) {
+        this.region = region;
+        if (this.view) {
+            if (_.isFunction(this.view)) {
+                var ViewClass = this.view;
+                this.view = new ViewClass({
+                    model: this.model
+                });
+            }
+        } else {
+            this.view = new SimpleView({
+                model: this.model,
+                template: this.template
+            });
+        }
+        this.region.show(this.view);
+    }
+
+});
+
+//>>excludeStart('excludeDebug', pragmas.excludeDebug)
+SimpleActivity.prototype.name = "SimpleActivity";
+//>>excludeEnd('excludeDebug')
+
+module.exports = SimpleActivity;
+
