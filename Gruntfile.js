@@ -3,7 +3,7 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-rigger');
     grunt.loadNpmTasks('grunt-contrib');
-    grunt.loadNpmTasks('grunt-jasmine-runner');
+    //grunt.loadNpmTasks('grunt-jasmine-runner');
 
     // Project configuration.
     grunt.initConfig({
@@ -38,31 +38,31 @@ module.exports = function (grunt) {
                 }
             }
         },
-
-        jasmine: {
-            src: [
-                'boilerplate/libs/jquery-1.9.0.min.js',
-                'spec/javascripts/support/json2.js',
-                'boilerplate/libs/amdjs/underscore-1.4.3.js',
-                'boilerplate/libs/amdjs/backbone-0.9.10.js',
-                'spec/javascripts/support/marionette.core-1.0.0-rc4.js',
-                'spec/javascripts/support/brix.support.js',
-                'src/brix.helpers.js',
-                'src/brix.place.js',
-                'src/brix.placetokenizer.js',
-                'src/brix.placecontroller.js',
-                'src/brix.module.js',
-                'src/brix.activity.js',
-                'src/brix.activitymanager.js',
-                'src/brix.compositemanager.js'
-            ],
-            helpers: 'spec/javascripts/helpers/*.js',
-            specs: 'spec/javascripts/**/*.spec.js'
-        },
-
-        'jasmine-server': {
-            browser: false
-        },
+//
+//        jasmine: {
+//            src: [
+//                'boilerplate/libs/jquery-1.9.0.min.js',
+//                'spec/javascripts/support/json2.js',
+//                'boilerplate/libs/amdjs/underscore-1.4.3.js',
+//                'boilerplate/libs/amdjs/backbone-0.9.10.js',
+//                'spec/javascripts/support/marionette.core-1.0.0-rc4.js',
+//                'spec/javascripts/support/brix.support.js',
+//                'src/brix.helpers.js',
+//                'src/brix.place.js',
+//                'src/brix.placetokenizer.js',
+//                'src/brix.placecontroller.js',
+//                'src/brix.module.js',
+//                'src/brix.activity.js',
+//                'src/brix.activitymanager.js',
+//                'src/brix.compositemanager.js'
+//            ],
+//            helpers: 'spec/javascripts/helpers/*.js',
+//            specs: 'spec/javascripts/**/*.spec.js'
+//        },
+//
+//        'jasmine-server': {
+//            browser: false
+//        },
 
         jshint: {
             options: {
@@ -126,6 +126,7 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', 'lint rig copy requirejs');
+    grunt.registerTask('lint', ['jshint']);
+    grunt.registerTask('default', ['lint', 'rig', 'copy', 'requirejs']);
 
 };

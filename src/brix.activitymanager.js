@@ -69,7 +69,15 @@ Brix.ActivityManager = Brix.Module.extend(
             if (Underscore.isFunction(activityMapper)) {
                 this.mapper = activityMapper;
             }
+            this.initialize.apply(this, arguments);
         },
+
+        /**
+         * Could be overridden by inheritors
+         */
+        initialize: function () {
+        },
+
         /**
          * Empty function by default, could be rewritten
          * @param {Brix.Place} newPlace

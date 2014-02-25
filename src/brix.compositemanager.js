@@ -20,10 +20,18 @@ Brix.CompositeManager = Brix.Module.extend(
                 this.layoutView = options.layoutView || this.layoutView;
                 this.regions = options.regions || this.regions;
             }
-            if (!this.layoutView || !this.regions) {
-                throw new Error("Wrong initialization of CompositeManager");
+            if (Underscore.isFunction(this.regions)) {
+                this.regions = this.regions();
             }
+            this.initialize.apply(this, arguments);
         },
+
+        /**
+         * Could be overridden by inheritors
+         */
+        initialize: function () {
+        },
+
 
         layoutView: null,
 
@@ -48,9 +56,19 @@ Brix.CompositeManager = Brix.Module.extend(
             // create managers
             var managers = [];
             Underscore.each(this.regions, function (ManagerClass, regionKey) {
-                var manager = new ManagerClass();
-                if (!(manager instanceof Brix.Module)) {
-                    throw new Error("Class should extend from Brix.Module");
+                var manager;
+                if (Underscore.isFunction(ManagerClass)) {
+                    manager = new ManagerClass();
+                } else {
+                    manager = ManagerClass;
+                }
+                if (manager instanceof Brix.Activity) {
+                    var activity = manager;
+                    manager = new Brix.ActivityManager(function() {
+                        return activity;
+                    });
+                } else if (!(manager instanceof Brix.Module)) {
+                    throw new Error("Class should extend from Brix.Module or Brix.Activity");
                 }
                 manager.start(placeChangeInitiator, layout[regionKey], place);
                 managers.push(manager);

@@ -1,6 +1,3 @@
-// BrixJS, v0.8.5
-// Copyright (c) 2013 Denis Davydkov.
-// Distributed under MIT license
 (function (root, factory) {
     if (typeof exports === 'object') {
         var underscore = require('underscore');
@@ -510,7 +507,15 @@
               if (Underscore.isFunction(activityMapper)) {
                   this.mapper = activityMapper;
               }
+              this.initialize.apply(this, arguments);
           },
+  
+          /**
+           * Could be overridden by inheritors
+           */
+          initialize: function () {
+          },
+  
           /**
            * Empty function by default, could be rewritten
            * @param {Brix.Place} newPlace
@@ -547,7 +552,6 @@
           }
       }
   );
-  
   // Brix.DelegateManager
   // -------
   
@@ -584,14 +588,9 @@
       if (!(manager instanceof Brix.Module)) {
           throw new Error("Class should extend from Brix.Module");
       }
-      if (this.currentManager && manager.constructor === this.currentManager.constructor) {
-          // we already have this manager started, just propagate place change event
-          this.trigger(PLACE_CHANGE_EVENT, newPlace);
-      } else {
-          _delegateManagerStopCurrentManager.call(this);
-          this.currentManager = manager;
-          manager.start(this, this.region, newPlace);
-      }
+      _delegateManagerStopCurrentManager.call(this);
+      this.currentManager = manager;
+      manager.start(this, this.region, newPlace);
   };
   
   /**
@@ -615,6 +614,12 @@
               if (Underscore.isFunction(managerMapper)) {
                   this.mapper = managerMapper;
               }
+              this.initialize.apply(this, arguments);
+          },
+          /**
+           * Could be overridden by inheritors
+           */
+          initialize: function () {
           },
           /**
            * Empty function by default, could be rewritten
@@ -674,10 +679,18 @@
                   this.layoutView = options.layoutView || this.layoutView;
                   this.regions = options.regions || this.regions;
               }
-              if (!this.layoutView || !this.regions) {
-                  throw new Error("Wrong initialization of CompositeManager");
+              if (Underscore.isFunction(this.regions)) {
+                  this.regions = this.regions();
               }
+              this.initialize.apply(this, arguments);
           },
+  
+          /**
+           * Could be overridden by inheritors
+           */
+          initialize: function () {
+          },
+  
   
           layoutView: null,
   
@@ -702,9 +715,19 @@
               // create managers
               var managers = [];
               Underscore.each(this.regions, function (ManagerClass, regionKey) {
-                  var manager = new ManagerClass();
-                  if (!(manager instanceof Brix.Module)) {
-                      throw new Error("Class should extend from Brix.Module");
+                  var manager;
+                  if (Underscore.isFunction(ManagerClass)) {
+                      manager = new ManagerClass();
+                  } else {
+                      manager = ManagerClass;
+                  }
+                  if (manager instanceof Brix.Activity) {
+                      var activity = manager;
+                      manager = new Brix.ActivityManager(function() {
+                          return activity;
+                      });
+                  } else if (!(manager instanceof Brix.Module)) {
+                      throw new Error("Class should extend from Brix.Module or Brix.Activity");
                   }
                   manager.start(placeChangeInitiator, layout[regionKey], place);
                   managers.push(manager);

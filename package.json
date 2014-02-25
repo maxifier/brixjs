@@ -1,7 +1,7 @@
 {
     "name": "Backbone.Marionette.Brix",
     "description": "Make your Marionette.js apps scale and evolve infinitely!",
-    "version": "0.8.5",
+    "version": "0.9.0",
     "homepage": "https://github.com/beenokle/brixjs",
     "keywords": [
         "backbone",
@@ -29,7 +29,7 @@
     },
 
     "bugs": {
-        "web": "https://github.com/beenokle/brixjs/issues"
+        "url": "https://github.com/beenokle/brixjs/issues"
     },
 
     "repository": {
@@ -40,10 +40,11 @@
     "github": "https://github.com/beenokle/brixjs",
 
     "devDependencies": {
-        "grunt": "~0.3.16",
+        "grunt": "~0.4.2",
         "grunt-jasmine-runner": "latest",
         "grunt-rigger": "*",
         "grunt-contrib": "latest",
-        "express": "3.0.4"
+        "express": "3.0.4",
+        "underscore": "latest"
     }
 }

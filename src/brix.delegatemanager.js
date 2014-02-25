@@ -34,14 +34,9 @@ var _delegateManagerOnPlaceChange = function (newPlace) {
     if (!(manager instanceof Brix.Module)) {
         throw new Error("Class should extend from Brix.Module");
     }
-    if (this.currentManager && manager.constructor === this.currentManager.constructor) {
-        // we already have this manager started, just propagate place change event
-        this.trigger(PLACE_CHANGE_EVENT, newPlace);
-    } else {
-        _delegateManagerStopCurrentManager.call(this);
-        this.currentManager = manager;
-        manager.start(this, this.region, newPlace);
-    }
+    _delegateManagerStopCurrentManager.call(this);
+    this.currentManager = manager;
+    manager.start(this, this.region, newPlace);
 };
 
 /**
@@ -65,6 +60,12 @@ Brix.DelegateManager = Brix.Module.extend(
             if (Underscore.isFunction(managerMapper)) {
                 this.mapper = managerMapper;
             }
+            this.initialize.apply(this, arguments);
+        },
+        /**
+         * Could be overridden by inheritors
+         */
+        initialize: function () {
         },
         /**
          * Empty function by default, could be rewritten
