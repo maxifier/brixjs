@@ -7,12 +7,14 @@ var Brix = require('brix');
 var Marionette = require('marionette');
 var _ = require('underscore');
 
-var SimpleView = Marionette.ItemView.extend({
+Brix.SimpleView = Marionette.ItemView.extend({
     initialize: function (options) {
         this.template = options.template;
         this.listenTo(this.model, 'change', this.render);
     }
 });
+
+Brix.SimpleView.extend = extend;
 
 var SimpleActivity = Brix.Activity.extend({
 
@@ -35,7 +37,7 @@ var SimpleActivity = Brix.Activity.extend({
                 });
             }
         } else {
-            this.view = new SimpleView({
+            this.view = new Brix.SimpleView({
                 model: this.model,
                 template: this.template
             });
